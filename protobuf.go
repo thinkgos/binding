@@ -2,6 +2,8 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
+// +build !noprotopack
+
 package binding
 
 import (
@@ -10,6 +12,10 @@ import (
 
 	"github.com/golang/protobuf/proto"
 )
+
+// These implement the Binding interface and can be used to bind the data
+// present in the request to struct instances.
+var ProtoBuf = protobufBinding{}
 
 type protobufBinding struct{}
 

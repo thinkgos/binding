@@ -2,6 +2,8 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
+// +build !noyamlpack
+
 package binding
 
 import (
@@ -11,6 +13,10 @@ import (
 
 	"gopkg.in/yaml.v2"
 )
+
+// These implement the Binding interface and can be used to bind the data
+// present in the request to struct instances.
+var YAML = yamlBinding{}
 
 type yamlBinding struct{}
 

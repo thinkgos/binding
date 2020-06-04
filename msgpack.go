@@ -14,6 +14,10 @@ import (
 	"github.com/ugorji/go/codec"
 )
 
+// These implement the Binding interface and can be used to bind the data
+// present in the request to struct instances.
+var MsgPack = msgpackBinding{}
+
 type msgpackBinding struct{}
 
 func (msgpackBinding) Name() string {

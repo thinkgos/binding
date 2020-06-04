@@ -24,6 +24,10 @@ var EnableDecoderUseNumber = false
 // keys which do not match any non-ignored, exported fields in the destination.
 var EnableDecoderDisallowUnknownFields = false
 
+// These implement the Binding interface and can be used to bind the data
+// present in the request to struct instances.
+var JSON = jsonBinding{}
+
 type jsonBinding struct{}
 
 func (jsonBinding) Name() string {

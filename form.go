@@ -10,6 +10,14 @@ import (
 
 const defaultMemory = 32 << 20
 
+// These implement the Binding interface and can be used to bind the data
+// present in the request to struct instances.
+var (
+	Form          = formBinding{}
+	FormPost      = formPostBinding{}
+	FormMultipart = formMultipartBinding{}
+)
+
 type formBinding struct{}
 type formPostBinding struct{}
 type formMultipartBinding struct{}

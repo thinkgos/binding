@@ -6,6 +6,10 @@ import (
 	"reflect"
 )
 
+// These implement the Binding interface and can be used to bind the data
+// present in the request to struct instances.
+var Header = headerBinding{}
+
 type headerBinding struct{}
 
 func (headerBinding) Name() string {

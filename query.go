@@ -6,6 +6,10 @@ package binding
 
 import "net/http"
 
+// These implement the Binding interface and can be used to bind the data
+// present in the request to struct instances.
+var Query = queryBinding{}
+
 type queryBinding struct{}
 
 func (queryBinding) Name() string {

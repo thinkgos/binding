@@ -2,8 +2,6 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-// +build !nomsgpack
-
 package binding
 
 import "net/http"
@@ -66,47 +64,6 @@ type StructValidator interface {
 // interface. It uses https://github.com/go-playground/validator/tree/v8.18.2
 // under the hood.
 var Validator StructValidator = &defaultValidator{}
-
-// These implement the Binding interface and can be used to bind the data
-// present in the request to struct instances.
-var (
-	JSON          = jsonBinding{}
-	XML           = xmlBinding{}
-	Form          = formBinding{}
-	Query         = queryBinding{}
-	FormPost      = formPostBinding{}
-	FormMultipart = formMultipartBinding{}
-	ProtoBuf      = protobufBinding{}
-	MsgPack       = msgpackBinding{}
-	YAML          = yamlBinding{}
-	Uri           = uriBinding{}
-	Header        = headerBinding{}
-)
-
-// Default returns the appropriate Binding instance based on the HTTP method
-// and the content type.
-func Default(method, contentType string) Binding {
-	if method == http.MethodGet {
-		return Form
-	}
-
-	switch contentType {
-	case MIMEJSON:
-		return JSON
-	case MIMEXML, MIMEXML2:
-		return XML
-	case MIMEPROTOBUF:
-		return ProtoBuf
-	case MIMEMSGPACK, MIMEMSGPACK2:
-		return MsgPack
-	case MIMEYAML:
-		return YAML
-	case MIMEMultipartPOSTForm:
-		return FormMultipart
-	default: // case MIMEPOSTForm:
-		return Form
-	}
-}
 
 func validate(obj interface{}) error {
 	if Validator == nil {

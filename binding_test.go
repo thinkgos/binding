@@ -18,9 +18,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gin-gonic/gin/testdata/protoexample"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
+	"github.com/thinkgos/binding/testdata/protoexample"
 )
 
 type appkey struct {
@@ -141,6 +141,31 @@ type FooStructForStringPtrType struct {
 
 type FooStructForMapPtrType struct {
 	PtrBar *map[string]interface{} `form:"ptr_bar"`
+}
+
+// Default returns the appropriate Binding instance based on the HTTP method
+// and the content type.
+func Default(method, contentType string) Binding {
+	if method == http.MethodGet {
+		return Form
+	}
+
+	switch contentType {
+	case MIMEJSON:
+		return JSON
+	case MIMEXML, MIMEXML2:
+		return XML
+	case MIMEPROTOBUF:
+		return ProtoBuf
+	case MIMEMSGPACK, MIMEMSGPACK2:
+		return MsgPack
+	case MIMEYAML:
+		return YAML
+	case MIMEMultipartPOSTForm:
+		return FormMultipart
+	default: // case MIMEPOSTForm:
+		return Form
+	}
 }
 
 func TestBindingDefault(t *testing.T) {
