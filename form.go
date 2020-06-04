@@ -26,7 +26,14 @@ func (formBinding) Name() string {
 	return "form"
 }
 
-func (formBinding) Bind(req *http.Request, obj interface{}) error {
+func (b formBinding) Bind(req *http.Request, obj interface{}) error {
+	if err := b.Decode(req, obj); err != nil {
+		return err
+	}
+	return validate(obj)
+}
+
+func (formBinding) Decode(req *http.Request, obj interface{}) error {
 	if err := req.ParseForm(); err != nil {
 		return err
 	}
@@ -35,37 +42,41 @@ func (formBinding) Bind(req *http.Request, obj interface{}) error {
 			return err
 		}
 	}
-	if err := mapForm(obj, req.Form); err != nil {
-		return err
-	}
-	return validate(obj)
+	return mapForm(obj, req.Form)
 }
 
 func (formPostBinding) Name() string {
 	return "form-urlencoded"
 }
 
-func (formPostBinding) Bind(req *http.Request, obj interface{}) error {
-	if err := req.ParseForm(); err != nil {
-		return err
-	}
-	if err := mapForm(obj, req.PostForm); err != nil {
+func (b formPostBinding) Bind(req *http.Request, obj interface{}) error {
+	if err := b.Decode(req, obj); err != nil {
 		return err
 	}
 	return validate(obj)
+}
+
+func (formPostBinding) Decode(req *http.Request, obj interface{}) error {
+	if err := req.ParseForm(); err != nil {
+		return err
+	}
+	return mapForm(obj, req.PostForm)
 }
 
 func (formMultipartBinding) Name() string {
 	return "multipart/form-data"
 }
 
-func (formMultipartBinding) Bind(req *http.Request, obj interface{}) error {
+func (b formMultipartBinding) Bind(req *http.Request, obj interface{}) error {
+	if err := b.Decode(req, obj); err != nil {
+		return err
+	}
+	return validate(obj)
+}
+
+func (formMultipartBinding) Decode(req *http.Request, obj interface{}) error {
 	if err := req.ParseMultipartForm(defaultMemory); err != nil {
 		return err
 	}
-	if err := mappingByPtr(obj, (*multipartRequest)(req), "form"); err != nil {
-		return err
-	}
-
-	return validate(obj)
+	return mappingByPtr(obj, (*multipartRequest)(req), "form")
 }

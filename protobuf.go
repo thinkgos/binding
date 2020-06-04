@@ -7,6 +7,7 @@
 package binding
 
 import (
+	"io"
 	"io/ioutil"
 	"net/http"
 
@@ -24,15 +25,45 @@ func (protobufBinding) Name() string {
 }
 
 func (b protobufBinding) Bind(req *http.Request, obj interface{}) error {
-	buf, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return err
-	}
-	return b.BindBody(buf, obj)
+	return bindProtobuf(req.Body, obj)
 }
 
 func (protobufBinding) BindBody(body []byte, obj interface{}) error {
 	if err := proto.Unmarshal(body, obj.(proto.Message)); err != nil {
+		return err
+	}
+	// Here it's same to return validate(obj), but util now we can't add
+	// `validate:""` to the struct which automatically generate by gen-proto
+	return nil
+	// return validate(obj)
+}
+
+func (b protobufBinding) BindReader(r io.Reader, obj interface{}) error {
+	return bindProtobuf(r, obj)
+}
+
+func (b protobufBinding) Decode(r *http.Request, obj interface{}) error {
+	return decodeProtobuf(r.Body, obj)
+}
+
+func (protobufBinding) DecodeBody(body []byte, obj interface{}) error {
+	return proto.Unmarshal(body, obj.(proto.Message))
+}
+
+func (b protobufBinding) DecodeReader(reader io.Reader, obj interface{}) error {
+	return decodeProtobuf(reader, obj)
+}
+
+func decodeProtobuf(reader io.Reader, obj interface{}) error {
+	buf, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return err
+	}
+	return proto.Unmarshal(buf, obj.(proto.Message))
+}
+
+func bindProtobuf(reader io.Reader, obj interface{}) error {
+	if err := decodeProtobuf(reader, obj); err != nil {
 		return err
 	}
 	// Here it's same to return validate(obj), but util now we can't add

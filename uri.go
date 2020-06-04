@@ -20,3 +20,7 @@ func (uriBinding) BindUri(m map[string][]string, obj interface{}) error {
 	}
 	return validate(obj)
 }
+
+func (uriBinding) DecodeUri(m map[string][]string, obj interface{}) error {
+	return mapUri(obj, m)
+}

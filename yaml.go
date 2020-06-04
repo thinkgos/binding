@@ -24,18 +24,37 @@ func (yamlBinding) Name() string {
 	return "yaml"
 }
 
-func (yamlBinding) Bind(req *http.Request, obj interface{}) error {
-	return decodeYAML(req.Body, obj)
+func (yamlBinding) Bind(r *http.Request, obj interface{}) error {
+	return bindYAML(r.Body, obj)
 }
 
 func (yamlBinding) BindBody(body []byte, obj interface{}) error {
+	return bindYAML(bytes.NewReader(body), obj)
+}
+
+func (yamlBinding) BindReader(reader io.Reader, obj interface{}) error {
+	return bindYAML(reader, obj)
+}
+
+func (yamlBinding) Decode(r *http.Request, obj interface{}) error {
+	return decodeYAML(r.Body, obj)
+}
+
+func (yamlBinding) DecodeBody(body []byte, obj interface{}) error {
 	return decodeYAML(bytes.NewReader(body), obj)
 }
 
-func decodeYAML(r io.Reader, obj interface{}) error {
-	decoder := yaml.NewDecoder(r)
-	if err := decoder.Decode(obj); err != nil {
+func (yamlBinding) DecodeReader(reader io.Reader, obj interface{}) error {
+	return decodeYAML(reader, obj)
+}
+
+func bindYAML(r io.Reader, obj interface{}) error {
+	if err := decodeYAML(r, obj); err != nil {
 		return err
 	}
 	return validate(obj)
+}
+
+func decodeYAML(r io.Reader, obj interface{}) error {
+	return yaml.NewDecoder(r).Decode(obj)
 }

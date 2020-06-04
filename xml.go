@@ -22,15 +22,35 @@ func (xmlBinding) Name() string {
 }
 
 func (xmlBinding) Bind(req *http.Request, obj interface{}) error {
-	return decodeXML(req.Body, obj)
+	return bindXML(req.Body, obj)
 }
 
 func (xmlBinding) BindBody(body []byte, obj interface{}) error {
+	return bindXML(bytes.NewReader(body), obj)
+}
+
+func (xmlBinding) BindReader(r io.Reader, obj interface{}) error {
+	return bindXML(r, obj)
+}
+
+func (xmlBinding) Decode(r *http.Request, obj interface{}) error {
+	return decodeXML(r.Body, obj)
+}
+
+func (xmlBinding) DecodeBody(body []byte, obj interface{}) error {
 	return decodeXML(bytes.NewReader(body), obj)
 }
+
+func (xmlBinding) DecodeReader(reader io.Reader, obj interface{}) error {
+	return decodeXML(reader, obj)
+}
+
 func decodeXML(r io.Reader, obj interface{}) error {
-	decoder := xml.NewDecoder(r)
-	if err := decoder.Decode(obj); err != nil {
+	return xml.NewDecoder(r).Decode(obj)
+}
+
+func bindXML(r io.Reader, obj interface{}) error {
+	if err := decodeXML(r, obj); err != nil {
 		return err
 	}
 	return validate(obj)

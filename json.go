@@ -38,11 +38,34 @@ func (jsonBinding) Bind(req *http.Request, obj interface{}) error {
 	if req == nil || req.Body == nil {
 		return fmt.Errorf("invalid request")
 	}
-	return decodeJSON(req.Body, obj)
+	return bindJSON(req.Body, obj)
 }
 
 func (jsonBinding) BindBody(body []byte, obj interface{}) error {
+	return bindJSON(bytes.NewReader(body), obj)
+}
+
+func (jsonBinding) BindReader(reader io.Reader, obj interface{}) error {
+	return bindJSON(reader, obj)
+}
+
+func (jsonBinding) Decode(r *http.Request, obj interface{}) error {
+	return decodeJSON(r.Body, obj)
+}
+
+func (jsonBinding) DecodeBody(body []byte, obj interface{}) error {
 	return decodeJSON(bytes.NewReader(body), obj)
+}
+
+func (jsonBinding) DecodeReader(reader io.Reader, obj interface{}) error {
+	return decodeJSON(reader, obj)
+}
+
+func bindJSON(r io.Reader, obj interface{}) error {
+	if err := decodeJSON(r, obj); err != nil {
+		return err
+	}
+	return validate(obj)
 }
 
 func decodeJSON(r io.Reader, obj interface{}) error {
@@ -53,8 +76,5 @@ func decodeJSON(r io.Reader, obj interface{}) error {
 	if EnableDecoderDisallowUnknownFields {
 		decoder.DisallowUnknownFields()
 	}
-	if err := decoder.Decode(obj); err != nil {
-		return err
-	}
-	return validate(obj)
+	return decoder.Decode(obj)
 }
