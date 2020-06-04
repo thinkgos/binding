@@ -26,5 +26,8 @@ binding uses `yaml`,`protobuf`,`yaml`, you can build without them with tags.
    $ go build -tags=noprotopack,noyamlpack,nomsgpack .
 ```
 
+## note 
+*** binding tag same as [validator](github.com/go-playground/validator/v10) which is `validate` not `binding` ***
+
 ## References
 - [gin](https://github.com/gin-gonic/gin)

@@ -46,6 +46,5 @@ func (v *defaultValidator) Engine() interface{} {
 func (v *defaultValidator) lazyinit() {
 	v.once.Do(func() {
 		v.validate = validator.New()
-		v.validate.SetTagName("binding")
 	})
 }
