@@ -34,37 +34,37 @@ type QueryTest struct {
 }
 
 type FooStruct struct {
-	Foo string `msgpack:"foo" json:"foo" form:"foo" xml:"foo" binding:"required"`
+	Foo string `msgpack:"foo" json:"foo" form:"foo" xml:"foo" validate:"required"`
 }
 
 type FooBarStruct struct {
 	FooStruct
-	Bar string `msgpack:"bar" json:"bar" form:"bar" xml:"bar" binding:"required"`
+	Bar string `msgpack:"bar" json:"bar" form:"bar" xml:"bar" validate:"required"`
 }
 
 type FooBarFileStruct struct {
 	FooBarStruct
-	File *multipart.FileHeader `form:"file" binding:"required"`
+	File *multipart.FileHeader `form:"file" validate:"required"`
 }
 
 type FooBarFileFailStruct struct {
 	FooBarStruct
-	File *multipart.FileHeader `invalid_name:"file" binding:"required"`
+	File *multipart.FileHeader `invalid_name:"file" validate:"required"`
 	// for unexport test
-	data *multipart.FileHeader `form:"data" binding:"required"`
+	data *multipart.FileHeader `form:"data" validate:"required"`
 }
 
 type FooDefaultBarStruct struct {
 	FooStruct
-	Bar string `msgpack:"bar" json:"bar" form:"bar,default=hello" xml:"bar" binding:"required"`
+	Bar string `msgpack:"bar" json:"bar" form:"bar,default=hello" xml:"bar" validate:"required"`
 }
 
 type FooStructUseNumber struct {
-	Foo interface{} `json:"foo" binding:"required"`
+	Foo interface{} `json:"foo" validate:"required"`
 }
 
 type FooStructDisallowUnknownFields struct {
-	Foo interface{} `json:"foo" binding:"required"`
+	Foo interface{} `json:"foo" validate:"required"`
 }
 
 type FooBarStructForTimeType struct {
@@ -136,7 +136,7 @@ type FooStructForBoolType struct {
 
 type FooStructForStringPtrType struct {
 	PtrFoo *string `form:"ptr_foo"`
-	PtrBar *string `form:"ptr_bar" binding:"required"`
+	PtrBar *string `form:"ptr_bar" validate:"required"`
 }
 
 type FooStructForMapPtrType struct {
@@ -674,7 +674,7 @@ func TestValidationDisabled(t *testing.T) {
 
 func TestRequiredSucceeds(t *testing.T) {
 	type HogeStruct struct {
-		Hoge *int `json:"hoge" binding:"required"`
+		Hoge *int `json:"hoge" validate:"required"`
 	}
 
 	var obj HogeStruct
@@ -685,7 +685,7 @@ func TestRequiredSucceeds(t *testing.T) {
 
 func TestRequiredFails(t *testing.T) {
 	type HogeStruct struct {
-		Hoge *int `json:"foo" binding:"required"`
+		Hoge *int `json:"foo" validate:"required"`
 	}
 
 	var obj HogeStruct

@@ -36,7 +36,7 @@ func (protobufBinding) BindBody(body []byte, obj interface{}) error {
 		return err
 	}
 	// Here it's same to return validate(obj), but util now we can't add
-	// `binding:""` to the struct which automatically generate by gen-proto
+	// `validate:""` to the struct which automatically generate by gen-proto
 	return nil
 	// return validate(obj)
 }
