@@ -16,11 +16,11 @@ $ go build -tags=jsoniter .
 ```
 
 ## Build without 
-- [yaml](https://github.com/json-iterator/go)
+- [msg](github.com/ugorji/go)
 - [protobuf](github.com/golang/protobuf/proto)
 - [yaml](https://github.com/go-yaml/yaml)
    
-binding uses `yaml`,`protobuf`,`yaml`, you can build without them with tags.
+binding uses `msg`,`protobuf`,`yaml`, you can build without them with tags.
    
 ```sh
    $ go build -tags=noprotopack,noyamlpack,nomsgpack .
