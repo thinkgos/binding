@@ -8,6 +8,11 @@ package binding
 // present in the request to struct instances.
 var Uri = uriBinding{}
 
+var (
+	_ BindingUri = (*uriBinding)(nil)
+	_ DecoderUri = (*uriBinding)(nil)
+)
+
 type uriBinding struct{}
 
 func (uriBinding) Name() string {

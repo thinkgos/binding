@@ -7,7 +7,6 @@
 package binding
 
 import (
-	"bytes"
 	"io"
 	"net/http"
 
@@ -17,6 +16,13 @@ import (
 // These implement the Binding interface and can be used to bind the data
 // present in the request to struct instances.
 var MsgPack = msgpackBinding{}
+
+var (
+	_ Binding     = (*msgpackBinding)(nil)
+	_ BindingBody = (*msgpackBinding)(nil)
+	_ Decoder     = (*msgpackBinding)(nil)
+	_ DecoderBody = (*msgpackBinding)(nil)
+)
 
 type msgpackBinding struct{}
 
@@ -29,7 +35,7 @@ func (msgpackBinding) Bind(req *http.Request, obj interface{}) error {
 }
 
 func (msgpackBinding) BindBody(body []byte, obj interface{}) error {
-	return bindMsgPack(bytes.NewReader(body), obj)
+	return bindMsgPackBody(body, obj)
 }
 
 func (msgpackBinding) BindReader(reader io.Reader, obj interface{}) error {
@@ -41,11 +47,18 @@ func (msgpackBinding) Decode(r *http.Request, obj interface{}) error {
 }
 
 func (msgpackBinding) DecodeBody(body []byte, obj interface{}) error {
-	return decodeMsgPack(bytes.NewReader(body), obj)
+	return decodeMsgPackBody(body, obj)
 }
 
 func (msgpackBinding) DecodeReader(reader io.Reader, obj interface{}) error {
 	return decodeMsgPack(reader, obj)
+}
+
+func bindMsgPackBody(in []byte, obj interface{}) error {
+	if err := decodeMsgPackBody(in, obj); err != nil {
+		return err
+	}
+	return validate(obj)
 }
 
 func bindMsgPack(r io.Reader, obj interface{}) error {
@@ -53,6 +66,10 @@ func bindMsgPack(r io.Reader, obj interface{}) error {
 		return err
 	}
 	return validate(obj)
+}
+
+func decodeMsgPackBody(in []byte, obj interface{}) error {
+	return codec.NewDecoderBytes(in, new(codec.MsgpackHandle)).Decode(obj)
 }
 
 func decodeMsgPack(r io.Reader, obj interface{}) error {

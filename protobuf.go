@@ -18,14 +18,21 @@ import (
 // present in the request to struct instances.
 var ProtoBuf = protobufBinding{}
 
+var (
+	_ Binding     = (*protobufBinding)(nil)
+	_ BindingBody = (*protobufBinding)(nil)
+	_ Decoder     = (*protobufBinding)(nil)
+	_ DecoderBody = (*protobufBinding)(nil)
+)
+
 type protobufBinding struct{}
 
 func (protobufBinding) Name() string {
 	return "protobuf"
 }
 
-func (b protobufBinding) Bind(req *http.Request, obj interface{}) error {
-	return bindProtobuf(req.Body, obj)
+func (b protobufBinding) Bind(r *http.Request, obj interface{}) error {
+	return b.BindReader(r.Body, obj)
 }
 
 func (protobufBinding) BindBody(body []byte, obj interface{}) error {
@@ -39,35 +46,31 @@ func (protobufBinding) BindBody(body []byte, obj interface{}) error {
 }
 
 func (b protobufBinding) BindReader(r io.Reader, obj interface{}) error {
-	return bindProtobuf(r, obj)
-}
-
-func (b protobufBinding) Decode(r *http.Request, obj interface{}) error {
-	return decodeProtobuf(r.Body, obj)
-}
-
-func (protobufBinding) DecodeBody(body []byte, obj interface{}) error {
-	return proto.Unmarshal(body, obj.(proto.Message))
-}
-
-func (b protobufBinding) DecodeReader(reader io.Reader, obj interface{}) error {
-	return decodeProtobuf(reader, obj)
-}
-
-func decodeProtobuf(reader io.Reader, obj interface{}) error {
-	buf, err := ioutil.ReadAll(reader)
+	buf, err := ioutil.ReadAll(r)
 	if err != nil {
 		return err
 	}
-	return proto.Unmarshal(buf, obj.(proto.Message))
-}
-
-func bindProtobuf(reader io.Reader, obj interface{}) error {
-	if err := decodeProtobuf(reader, obj); err != nil {
+	if err = proto.Unmarshal(buf, obj.(proto.Message)); err != nil {
 		return err
 	}
 	// Here it's same to return validate(obj), but util now we can't add
 	// `validate:""` to the struct which automatically generate by gen-proto
 	return nil
 	// return validate(obj)
+}
+
+func (b protobufBinding) Decode(r *http.Request, obj interface{}) error {
+	return b.DecodeReader(r.Body, obj)
+}
+
+func (protobufBinding) DecodeBody(body []byte, obj interface{}) error {
+	return proto.Unmarshal(body, obj.(proto.Message))
+}
+
+func (b protobufBinding) DecodeReader(r io.Reader, obj interface{}) error {
+	buf, err := ioutil.ReadAll(r)
+	if err != nil {
+		return err
+	}
+	return proto.Unmarshal(buf, obj.(proto.Message))
 }

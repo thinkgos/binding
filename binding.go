@@ -4,7 +4,10 @@
 
 package binding
 
-import "net/http"
+import (
+	"io"
+	"net/http"
+)
 
 // Content-Type MIME of the most common data formats.
 const (
@@ -30,10 +33,11 @@ type Binding interface {
 }
 
 // BindingBody adds BindBody method to Binding. BindBody is similar with Bind,
-// but it reads the body from supplied bytes instead of req.Body.
+// but it reads the body or io.Reader from supplied bytes instead of req.Body.
 type BindingBody interface {
 	Binding
 	BindBody([]byte, interface{}) error
+	BindReader(io.Reader, interface{}) error
 }
 
 // BindingUri adds BindUri method to Binding. BindUri is similar with Bind,
@@ -41,6 +45,27 @@ type BindingBody interface {
 type BindingUri interface {
 	Name() string
 	BindUri(map[string][]string, interface{}) error
+}
+
+//  DecoderUri is similar with Decoder, but it read the Params.
+type DecoderUri interface {
+	Name() string
+	DecodeUri(map[string][]string, interface{}) error
+}
+
+// Decoder decode data present in the request such as JSON request body, query parameters or
+// the form POST.
+type Decoder interface {
+	Name() string
+	Decode(*http.Request, interface{}) error
+}
+
+// DecoderBody is similar with Decoder,
+// but it reads the body from supplied bytes or io.Reader instead of req.Body.
+type DecoderBody interface {
+	Decoder
+	DecodeBody([]byte, interface{}) error
+	DecodeReader(io.Reader, interface{}) error
 }
 
 // StructValidator is the minimal interface which needs to be implemented in

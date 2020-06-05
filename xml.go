@@ -5,7 +5,6 @@
 package binding
 
 import (
-	"bytes"
 	"encoding/xml"
 	"io"
 	"net/http"
@@ -15,43 +14,45 @@ import (
 // present in the request to struct instances.
 var XML = xmlBinding{}
 
+var (
+	_ Binding     = (*xmlBinding)(nil)
+	_ BindingBody = (*xmlBinding)(nil)
+	_ Decoder     = (*xmlBinding)(nil)
+	_ DecoderBody = (*xmlBinding)(nil)
+)
+
 type xmlBinding struct{}
 
 func (xmlBinding) Name() string {
 	return "xml"
 }
 
-func (xmlBinding) Bind(req *http.Request, obj interface{}) error {
-	return bindXML(req.Body, obj)
+func (b xmlBinding) Bind(r *http.Request, obj interface{}) error {
+	return b.BindReader(r.Body, obj)
 }
 
-func (xmlBinding) BindBody(body []byte, obj interface{}) error {
-	return bindXML(bytes.NewReader(body), obj)
-}
-
-func (xmlBinding) BindReader(r io.Reader, obj interface{}) error {
-	return bindXML(r, obj)
-}
-
-func (xmlBinding) Decode(r *http.Request, obj interface{}) error {
-	return decodeXML(r.Body, obj)
-}
-
-func (xmlBinding) DecodeBody(body []byte, obj interface{}) error {
-	return decodeXML(bytes.NewReader(body), obj)
-}
-
-func (xmlBinding) DecodeReader(reader io.Reader, obj interface{}) error {
-	return decodeXML(reader, obj)
-}
-
-func decodeXML(r io.Reader, obj interface{}) error {
-	return xml.NewDecoder(r).Decode(obj)
-}
-
-func bindXML(r io.Reader, obj interface{}) error {
-	if err := decodeXML(r, obj); err != nil {
+func (b xmlBinding) BindReader(r io.Reader, obj interface{}) error {
+	if err := b.DecodeReader(r, obj); err != nil {
 		return err
 	}
 	return validate(obj)
+}
+
+func (b xmlBinding) BindBody(body []byte, obj interface{}) error {
+	if err := b.DecodeBody(body, obj); err != nil {
+		return err
+	}
+	return validate(obj)
+}
+
+func (b xmlBinding) Decode(r *http.Request, obj interface{}) error {
+	return b.DecodeReader(r.Body, obj)
+}
+
+func (xmlBinding) DecodeReader(r io.Reader, obj interface{}) error {
+	return xml.NewDecoder(r).Decode(obj)
+}
+
+func (xmlBinding) DecodeBody(body []byte, obj interface{}) error {
+	return xml.Unmarshal(body, obj)
 }

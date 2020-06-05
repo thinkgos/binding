@@ -10,14 +10,23 @@ import "net/http"
 // present in the request to struct instances.
 var Query = queryBinding{}
 
+var (
+	_ Binding = (*queryBinding)(nil)
+	_ Decoder = (*queryBinding)(nil)
+)
+
 type queryBinding struct{}
 
 func (queryBinding) Name() string {
 	return "query"
 }
 
-func (queryBinding) Bind(req *http.Request, obj interface{}) error {
-	if err := mapForm(obj, req.URL.Query()); err != nil {
+func (b queryBinding) Bind(req *http.Request, obj interface{}) error {
+	return b.BindForm(req.URL.Query(), obj)
+}
+
+func (queryBinding) BindForm(m map[string][]string, obj interface{}) error {
+	if err := mapForm(obj, m); err != nil {
 		return err
 	}
 	return validate(obj)
@@ -25,4 +34,8 @@ func (queryBinding) Bind(req *http.Request, obj interface{}) error {
 
 func (queryBinding) Decode(req *http.Request, obj interface{}) error {
 	return mapForm(obj, req.URL.Query())
+}
+
+func (queryBinding) DecodeForm(m map[string][]string, obj interface{}) error {
+	return mapForm(obj, m)
 }
