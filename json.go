@@ -28,47 +28,46 @@ var EnableDecoderDisallowUnknownFields = false
 // present in the request to struct instances.
 var JSON = jsonBinding{}
 
+var (
+	_ Binding     = (*jsonBinding)(nil)
+	_ BindingBody = (*jsonBinding)(nil)
+	_ Decoder     = (*jsonBinding)(nil)
+	_ DecoderBody = (*jsonBinding)(nil)
+)
+
 type jsonBinding struct{}
 
 func (jsonBinding) Name() string {
 	return "json"
 }
 
-func (jsonBinding) Bind(req *http.Request, obj interface{}) error {
+func (b jsonBinding) Bind(req *http.Request, obj interface{}) error {
 	if req == nil || req.Body == nil {
 		return fmt.Errorf("invalid request")
 	}
-	return bindJSON(req.Body, obj)
+	return b.BindReader(req.Body, obj)
 }
 
-func (jsonBinding) BindBody(body []byte, obj interface{}) error {
-	return bindJSON(bytes.NewReader(body), obj)
+func (b jsonBinding) BindBody(body []byte, obj interface{}) error {
+	return b.BindReader(bytes.NewReader(body), obj)
 }
 
-func (jsonBinding) BindReader(reader io.Reader, obj interface{}) error {
-	return bindJSON(reader, obj)
-}
-
-func (jsonBinding) Decode(r *http.Request, obj interface{}) error {
-	return decodeJSON(r.Body, obj)
-}
-
-func (jsonBinding) DecodeBody(body []byte, obj interface{}) error {
-	return decodeJSON(bytes.NewReader(body), obj)
-}
-
-func (jsonBinding) DecodeReader(reader io.Reader, obj interface{}) error {
-	return decodeJSON(reader, obj)
-}
-
-func bindJSON(r io.Reader, obj interface{}) error {
-	if err := decodeJSON(r, obj); err != nil {
+func (b jsonBinding) BindReader(r io.Reader, obj interface{}) error {
+	if err := b.DecodeReader(r, obj); err != nil {
 		return err
 	}
 	return validate(obj)
 }
 
-func decodeJSON(r io.Reader, obj interface{}) error {
+func (b jsonBinding) Decode(r *http.Request, obj interface{}) error {
+	return b.DecodeReader(r.Body, obj)
+}
+
+func (b jsonBinding) DecodeBody(body []byte, obj interface{}) error {
+	return b.DecodeReader(bytes.NewReader(body), obj)
+}
+
+func (jsonBinding) DecodeReader(r io.Reader, obj interface{}) error {
 	decoder := json.NewDecoder(r)
 	if EnableDecoderUseNumber {
 		decoder.UseNumber()

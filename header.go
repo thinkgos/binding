@@ -16,17 +16,23 @@ func (headerBinding) Name() string {
 	return "header"
 }
 
-func (headerBinding) Bind(req *http.Request, obj interface{}) error {
+func (b headerBinding) Bind(req *http.Request, obj interface{}) error {
+	return b.BindHeader(req.Header, obj)
+}
 
-	if err := mapHeader(obj, req.Header); err != nil {
+func (headerBinding) BindHeader(h map[string][]string, obj interface{}) error {
+	if err := mapHeader(obj, h); err != nil {
 		return err
 	}
-
 	return validate(obj)
 }
 
 func (headerBinding) Decode(req *http.Request, obj interface{}) error {
 	return mapHeader(obj, req.Header)
+}
+
+func (headerBinding) DecodeHeader(h map[string][]string, obj interface{}) error {
+	return mapHeader(obj, h)
 }
 
 func mapHeader(ptr interface{}, h map[string][]string) error {

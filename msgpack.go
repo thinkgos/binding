@@ -30,48 +30,32 @@ func (msgpackBinding) Name() string {
 	return "msgpack"
 }
 
-func (msgpackBinding) Bind(req *http.Request, obj interface{}) error {
-	return bindMsgPack(req.Body, obj)
+func (b msgpackBinding) Bind(req *http.Request, obj interface{}) error {
+	return b.BindReader(req.Body, obj)
 }
 
-func (msgpackBinding) BindBody(body []byte, obj interface{}) error {
-	return bindMsgPackBody(body, obj)
+func (b msgpackBinding) BindBody(body []byte, obj interface{}) error {
+	if err := b.DecodeBody(body, obj); err != nil {
+		return err
+	}
+	return validate(obj)
 }
 
-func (msgpackBinding) BindReader(reader io.Reader, obj interface{}) error {
-	return bindMsgPack(reader, obj)
+func (b msgpackBinding) BindReader(r io.Reader, obj interface{}) error {
+	if err := b.DecodeReader(r, obj); err != nil {
+		return err
+	}
+	return validate(obj)
 }
 
-func (msgpackBinding) Decode(r *http.Request, obj interface{}) error {
-	return decodeMsgPack(r.Body, obj)
+func (b msgpackBinding) Decode(r *http.Request, obj interface{}) error {
+	return b.DecodeReader(r.Body, obj)
 }
 
 func (msgpackBinding) DecodeBody(body []byte, obj interface{}) error {
-	return decodeMsgPackBody(body, obj)
+	return codec.NewDecoderBytes(body, new(codec.MsgpackHandle)).Decode(obj)
 }
 
-func (msgpackBinding) DecodeReader(reader io.Reader, obj interface{}) error {
-	return decodeMsgPack(reader, obj)
-}
-
-func bindMsgPackBody(in []byte, obj interface{}) error {
-	if err := decodeMsgPackBody(in, obj); err != nil {
-		return err
-	}
-	return validate(obj)
-}
-
-func bindMsgPack(r io.Reader, obj interface{}) error {
-	if err := decodeMsgPack(r, obj); err != nil {
-		return err
-	}
-	return validate(obj)
-}
-
-func decodeMsgPackBody(in []byte, obj interface{}) error {
-	return codec.NewDecoderBytes(in, new(codec.MsgpackHandle)).Decode(obj)
-}
-
-func decodeMsgPack(r io.Reader, obj interface{}) error {
+func (msgpackBinding) DecodeReader(r io.Reader, obj interface{}) error {
 	return codec.NewDecoder(r, new(codec.MsgpackHandle)).Decode(obj)
 }
