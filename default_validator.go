@@ -34,11 +34,17 @@ func (v *defaultValidator) ValidateStruct(obj interface{}) error {
 	return nil
 }
 
+// ValidateVar validates a single variable using tag style validation.
+func (v *defaultValidator) ValidateVar(field interface{}, tag string) error {
+	v.lazyinit()
+	return v.validate.Var(field, tag)
+}
+
 // Engine returns the underlying validator engine which powers the default
 // Validator instance. This is useful if you want to register custom validations
 // or struct level validations. See validator GoDoc for more info -
 // https://godoc.org/gopkg.in/go-playground/validator.v8
-func (v *defaultValidator) Engine() interface{} {
+func (v *defaultValidator) Engine() *validator.Validate {
 	v.lazyinit()
 	return v.validate
 }

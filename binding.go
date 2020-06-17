@@ -7,6 +7,8 @@ package binding
 import (
 	"io"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // Content-Type MIME of the most common data formats.
@@ -79,10 +81,11 @@ type StructValidator interface {
 	// If the struct is not valid or the validation itself fails, a descriptive error should be returned.
 	// Otherwise nil must be returned.
 	ValidateStruct(interface{}) error
-
+	// ValidateVar validates a single variable using tag style validation.
+	ValidateVar(field interface{}, tag string) error
 	// Engine returns the underlying validator engine which powers the
 	// StructValidator implementation.
-	Engine() interface{}
+	Engine() *validator.Validate
 }
 
 // Validator is the default validator which implements the StructValidator
