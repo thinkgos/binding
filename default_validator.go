@@ -11,12 +11,12 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+var _ StructValidator = (*defaultValidator)(nil)
+
 type defaultValidator struct {
 	once     sync.Once
 	validate *validator.Validate
 }
-
-var _ StructValidator = &defaultValidator{}
 
 // ValidateStruct receives any kind of type, but only performed struct or pointer to struct type.
 func (v *defaultValidator) ValidateStruct(obj interface{}) error {
@@ -26,7 +26,7 @@ func (v *defaultValidator) ValidateStruct(obj interface{}) error {
 		valueType = value.Elem().Kind()
 	}
 	if valueType == reflect.Struct {
-		v.lazyinit()
+		v.lazyInit()
 		if err := v.validate.Struct(obj); err != nil {
 			return err
 		}
@@ -36,7 +36,7 @@ func (v *defaultValidator) ValidateStruct(obj interface{}) error {
 
 // ValidateVar validates a single variable using tag style validation.
 func (v *defaultValidator) ValidateVar(field interface{}, tag string) error {
-	v.lazyinit()
+	v.lazyInit()
 	return v.validate.Var(field, tag)
 }
 
@@ -45,11 +45,11 @@ func (v *defaultValidator) ValidateVar(field interface{}, tag string) error {
 // or struct level validations. See validator GoDoc for more info -
 // https://godoc.org/gopkg.in/go-playground/validator.v8
 func (v *defaultValidator) Engine() *validator.Validate {
-	v.lazyinit()
+	v.lazyInit()
 	return v.validate
 }
 
-func (v *defaultValidator) lazyinit() {
+func (v *defaultValidator) lazyInit() {
 	v.once.Do(func() {
 		v.validate = validator.New()
 	})

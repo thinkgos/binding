@@ -94,8 +94,5 @@ type StructValidator interface {
 var Validator StructValidator = &defaultValidator{}
 
 func validate(obj interface{}) error {
-	if Validator == nil {
-		return nil
-	}
 	return Validator.ValidateStruct(obj)
 }
