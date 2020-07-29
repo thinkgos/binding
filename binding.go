@@ -99,3 +99,20 @@ func validate(obj interface{}) error {
 	}
 	return Validator.ValidateStruct(obj)
 }
+
+// DisableBindValidation closes the default validator.
+func DisableBindValidation() {
+	Validator = nil
+}
+
+// EnableJsonDecoderUseNumber sets true for EnableDecoderUseNumber to
+// call the UseNumber method on the JSON Decoder instance.Which default value false.
+func EnableJsonDecoderUseNumber() {
+	EnableDecoderUseNumber = true
+}
+
+// EnableJsonDecoderDisallowUnknownFields sets true for binding.EnableDecoderDisallowUnknownFields to
+// call the DisallowUnknownFields method on the JSON Decoder instance.Which default value false.
+func EnableJsonDecoderDisallowUnknownFields() {
+	EnableDecoderDisallowUnknownFields = true
+}
