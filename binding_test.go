@@ -51,7 +51,7 @@ type FooBarFileFailStruct struct {
 	FooBarStruct
 	File *multipart.FileHeader `invalid_name:"file" validate:"required"`
 	// for unexport test
-	data *multipart.FileHeader `form:"data" validate:"required"`
+	Data *multipart.FileHeader `form:"data" validate:"required"`
 }
 
 type FooDefaultBarStruct struct {
