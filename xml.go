@@ -31,15 +31,15 @@ func (b xmlBinding) Bind(r *http.Request, obj interface{}) error {
 	return b.BindReader(r.Body, obj)
 }
 
-func (b xmlBinding) BindReader(r io.Reader, obj interface{}) error {
-	if err := b.DecodeReader(r, obj); err != nil {
+func (b xmlBinding) BindBody(body []byte, obj interface{}) error {
+	if err := b.DecodeBody(body, obj); err != nil {
 		return err
 	}
 	return validate(obj)
 }
 
-func (b xmlBinding) BindBody(body []byte, obj interface{}) error {
-	if err := b.DecodeBody(body, obj); err != nil {
+func (b xmlBinding) BindReader(r io.Reader, obj interface{}) error {
+	if err := b.DecodeReader(r, obj); err != nil {
 		return err
 	}
 	return validate(obj)
@@ -49,10 +49,10 @@ func (b xmlBinding) Decode(r *http.Request, obj interface{}) error {
 	return b.DecodeReader(r.Body, obj)
 }
 
-func (xmlBinding) DecodeReader(r io.Reader, obj interface{}) error {
-	return xml.NewDecoder(r).Decode(obj)
-}
-
 func (xmlBinding) DecodeBody(body []byte, obj interface{}) error {
 	return xml.Unmarshal(body, obj)
+}
+
+func (xmlBinding) DecodeReader(r io.Reader, obj interface{}) error {
+	return xml.NewDecoder(r).Decode(obj)
 }

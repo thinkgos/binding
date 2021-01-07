@@ -33,7 +33,7 @@ func (b formBinding) Bind(req *http.Request, obj interface{}) error {
 	return validate(obj)
 }
 
-func (formBinding) Decode(req *http.Request, obj interface{}) error {
+func (b formBinding) Decode(req *http.Request, obj interface{}) error {
 	if err := req.ParseForm(); err != nil {
 		return err
 	}
@@ -42,7 +42,11 @@ func (formBinding) Decode(req *http.Request, obj interface{}) error {
 			return err
 		}
 	}
-	return mapForm(obj, req.Form)
+	return b.DecodeValue(req.Form, obj)
+}
+
+func (formBinding) DecodeValue(v map[string][]string, obj interface{}) error {
+	return mapForm(obj, v)
 }
 
 func (formPostBinding) Name() string {
@@ -56,11 +60,15 @@ func (b formPostBinding) Bind(req *http.Request, obj interface{}) error {
 	return validate(obj)
 }
 
-func (formPostBinding) Decode(req *http.Request, obj interface{}) error {
+func (b formPostBinding) Decode(req *http.Request, obj interface{}) error {
 	if err := req.ParseForm(); err != nil {
 		return err
 	}
-	return mapForm(obj, req.PostForm)
+	return b.DecodeValue(req.PostForm, obj)
+}
+
+func (formPostBinding) DecodeValue(v map[string][]string, obj interface{}) error {
+	return mapForm(obj, v)
 }
 
 func (formMultipartBinding) Name() string {
