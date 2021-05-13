@@ -20,7 +20,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
-	"github.com/thinkgos/binding/testdata/protoexample"
+	"github.com/things-go/binding/testdata/protoexample"
 )
 
 type appkey struct {

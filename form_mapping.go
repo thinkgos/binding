@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thinkgos/binding/internal/bytesconv"
-	"github.com/thinkgos/binding/internal/json"
+	"github.com/things-go/binding/internal/bytesconv"
+	"github.com/things-go/binding/internal/json"
 )
 
 var errUnknownType = errors.New("unknown type")

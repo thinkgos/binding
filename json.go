@@ -10,7 +10,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/thinkgos/binding/internal/json"
+	"github.com/things-go/binding/internal/json"
 )
 
 // EnableDecoderUseNumber is used to call the UseNumber method on the JSON

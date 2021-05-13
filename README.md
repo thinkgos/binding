@@ -1,13 +1,13 @@
 # binding this is gin binding package, but with option tags
 
-[![GoDoc](https://godoc.org/github.com/thinkgos/binding?status.svg)](https://godoc.org/github.com/thinkgos/binding)
-[![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/thinkgos/binding?tab=doc)
-[![Build Status](https://www.travis-ci.org/thinkgos/binding.svg?branch=master)](https://www.travis-ci.org/thinkgos/binding)
-[![codecov](https://codecov.io/gh/thinkgos/binding/branch/master/graph/badge.svg)](https://codecov.io/gh/thinkgos/binding)
-![Action Status](https://github.com/thinkgos/binding/workflows/Go/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/thinkgos/binding)](https://goreportcard.com/report/github.com/thinkgos/binding)
-[![Licence](https://img.shields.io/github/license/thinkgos/binding)](https://raw.githubusercontent.com/thinkgos/binding/master/LICENSE)
-[![Tag](https://img.shields.io/github/v/tag/thinkgos/binding)](https://github.com/thinkgos/binding/tags)
+[![GoDoc](https://godoc.org/github.com/things-go/binding?status.svg)](https://godoc.org/github.com/things-go/binding)
+[![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/things-go/binding?tab=doc)
+[![Build Status](https://www.travis-ci.org/things-go/binding.svg?branch=master)](https://www.travis-ci.org/thinkgos/binding)
+[![codecov](https://codecov.io/gh/things-go/binding/branch/master/graph/badge.svg)](https://codecov.io/gh/things-go/binding)
+![Action Status](https://github.com/things-go/binding/workflows/Go/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/things-go/binding)](https://goreportcard.com/report/github.com/things-go/binding)
+[![Licence](https://img.shields.io/github/license/things-go/binding)](https://raw.githubusercontent.com/things-go/binding/master/LICENSE)
+[![Tag](https://img.shields.io/github/v/tag/things-go/binding)](https://github.com/things-go/binding/tags)
 
 ## Build with [jsoniter](https://github.com/json-iterator/go)
 
