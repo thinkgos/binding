@@ -196,7 +196,7 @@ func TestValidatePrimitives(t *testing.T) {
 // custom validation can be registered on it.
 // The `notone` binding directive is for custom validation and registered later.
 type structCustomValidation struct {
-	Integer int `validate:"notone"`
+	Integer int `binding:"notone"`
 }
 
 func notOne(f1 validator.FieldLevel) bool {
